@@ -1,0 +1,26 @@
+[package]
+authors = ["martinjlowm <Martin Jesper Low Madsen>"]
+edition = "2021"
+name = "chill"
+publish = false
+version = "0.0.1"
+
+[[bin]]
+name = "chill"
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+anyhow = "1.0.68"
+chrono = { version = "0.4.23", features = ["clock"] }
+chrono-tz = "0.8.1"
+rocket = "0.5.0-rc.2"
+rspotify = "0.11.6"
+serde_json = "1.0.91"
+tokio = { version = "1.24.2", features = ["rt-multi-thread", "macros", "sync", "parking_lot"] }
+tracing = { version = "0.1.37" }
+tracing-subscriber = { version = "0.3", features = [
+  "tracing-log",
+  "env-filter",
+] }
