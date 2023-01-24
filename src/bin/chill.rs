@@ -1,15 +1,13 @@
 use anyhow::Result;
-use chrono::{DateTime, Timelike, Utc, Datelike, Weekday};
+use chrono::{DateTime, Datelike, Timelike, Utc, Weekday};
 use chrono_tz::Europe::Copenhagen;
 use chrono_tz::Tz;
 use rocket::Shutdown;
 use rocket::{get, routes};
-use rspotify::{
-    prelude::*, scopes, AuthCodeSpotify, Config, Credentials, OAuth, Token,
-};
-use tracing::info;
+use rspotify::{prelude::*, scopes, AuthCodeSpotify, Config, Credentials, OAuth, Token};
+use std::{env, fs};
 use tokio::sync::OnceCell;
-use std::env;
+use tracing::info;
 
 static NINE: u32 = 21;
 static TEN: u32 = 22;
@@ -74,11 +72,25 @@ async fn main() -> Result<()> {
         let url = spotify.get_authorize_url(true).unwrap();
         info!("Had no token. To get a new one, visit {}", url);
 
-        rocket::build().mount("/", routes![callback]).launch().await.ok();
+        rocket::build()
+            .mount("/", routes![callback])
+            .launch()
+            .await
+            .ok();
     }
 
-    let token = (*spotify.get_token().lock().await.unwrap()).clone().unwrap();
-    info!("Set secret for CI: TOKEN='{}'", serde_json::to_string(&token)?);
+    let token = (*spotify.get_token().lock().await.unwrap())
+        .clone()
+        .unwrap();
+    let token_json = serde_json::to_string(&token)?;
+    info!("TOKEN='{}'", token_json);
+
+    if env::var("CI").is_ok() {
+        fs::write(
+            env::var("GITHUB_OUTPUT").unwrap(),
+            format!("TOKEN='{token_json}'"),
+        )?;
+    }
 
     let after_nine = now.clone().with_hour(NINE).unwrap() <= now;
     let after_ten = now.clone().with_hour(TEN).unwrap() <= now;

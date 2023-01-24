@@ -30,12 +30,22 @@ export class Main extends Stack {
         },
         {
           name: "Execute!",
+          id: "main",
           run: "cargo run",
           env: {
             RUST_LOG: "trace",
             TOKEN: "${{ secrets.TOKEN }}",
             RSPOTIFY_CLIENT_ID: "${{ secrets.RSPOTIFY_CLIENT_ID }}",
             RSPOTIFY_CLIENT_SECRET: "${{ secrets.RSPOTIFY_CLIENT_SECRET }}",
+          },
+        },
+        {
+          name: "Update token",
+          uses: "hmanzur/actions-set-secret@v1",
+          with: {
+            name: "TOKEN",
+            value: "${{ steps.main.outputs.TOKEN }}",
+            token: "${{ secrets.PAT }}",
           },
         },
       ],
