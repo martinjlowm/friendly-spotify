@@ -41,7 +41,7 @@ export class Main extends Stack {
         },
         {
           name: "Update token",
-          uses: "hmanzur/actions-set-secret@v1",
+          uses: "hmanzur/actions-set-secret@v1.0.0",
           with: {
             name: "TOKEN",
             value: "${{ steps.main.outputs.TOKEN }}",
