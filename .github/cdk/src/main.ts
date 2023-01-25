@@ -53,6 +53,6 @@ export class Main extends Stack {
   }
 }
 
-const app = new App();
+const app = new App({ createValidateWorkflow: false });
 new Main(app, "cdk");
 app.synth();
